@@ -1,0 +1,46 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: curaclinic-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: clinicflow_root_password
+      MYSQL_DATABASE: clinicflow
+      MYSQL_USER: clinicflow
+      MYSQL_PASSWORD: clinicflow_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pclinicflow_root_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: curaclinic-app
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: clinicflow
+      DB_USER: clinicflow
+      DB_PASSWORD: clinicflow_password
+      DB_SSL: "false"
+      SEED_DEMO_DATA: "true"
+      JWT_SECRET: production-secret-key-curaclinic-must-be-long-enough-384bits-minimum-change-me
+      FRONTEND_ORIGIN: "*"
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:
+

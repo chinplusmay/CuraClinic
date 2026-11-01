@@ -1,0 +1,25 @@
+# Build output
+backend/target/
+frontend/dist/
+frontend/node_modules/
+
+# Local logs and screenshots
+logs/
+screenshots/
+
+# Editor / OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Local secrets and environment overrides
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Imported chat snapshot and local agent markers
+.cloud-attachments/
+.freebuff/
