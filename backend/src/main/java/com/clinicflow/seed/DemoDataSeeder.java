@@ -73,35 +73,43 @@ public class DemoDataSeeder implements ApplicationRunner {
     }
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
         if (!enabled) {
             return;
         }
-        if (clinicRepository.count() > 0) {
-            Clinic clinic = clinicRepository.findAll().get(0);
+        Clinic clinic;
+        try {
+            if (clinicRepository.count() > 0) {
+                clinic = clinicRepository.findAll().get(0);
+            } else {
+                log.info("Seeding ClinicFlow demo clinic…");
+                clinic = new Clinic();
+                clinic.setName("Northbridge Family Clinic");
+                clinic.setTimezone("Asia/Kolkata");
+                clinic.setAddress("2nd Floor, 14 Linden Road, Bengaluru 560001");
+                clinic.setPhone("+91 80 4123 8890");
+                clinic.setSlotMinutes(20);
+                clinic = clinicRepository.save(clinic);
+            }
             seedStaff(clinic);
+        } catch (Exception ex) {
+            log.error("Failed to seed demo clinic or staff: {}", ex.getMessage(), ex);
             return;
         }
-        log.info("Seeding ClinicFlow demo clinic…");
 
-        Clinic clinic = new Clinic();
-        clinic.setName("Northbridge Family Clinic");
-        clinic.setTimezone("Asia/Kolkata");
-        clinic.setAddress("2nd Floor, 14 Linden Road, Bengaluru 560001");
-        clinic.setPhone("+91 80 4123 8890");
-        clinic.setSlotMinutes(20);
-        clinicRepository.save(clinic);
-
-        seedStaff(clinic);
-        List<Doctor> doctors = seedDoctors(clinic);
-        seedBlock(doctors.get(1));
-        List<Patient> patients =        seedPatients(clinic);
-        seedAppointments(clinic, doctors, patients);
-        seedUpcomingCancellations(clinic);
-        seedWaitlist(clinic, doctors, patients);
-
-        log.info("Demo clinic seeded with {} appointments", appointmentRepository.count());
+        try {
+            if (doctorRepository.count() == 0) {
+                List<Doctor> doctors = seedDoctors(clinic);
+                seedBlock(doctors.get(1));
+                List<Patient> patients = seedPatients(clinic);
+                seedAppointments(clinic, doctors, patients);
+                seedUpcomingCancellations(clinic);
+                seedWaitlist(clinic, doctors, patients);
+                log.info("Demo clinic seeded with {} appointments", appointmentRepository.count());
+            }
+        } catch (Exception ex) {
+            log.warn("Secondary demo data seeding encountered an issue, but staff accounts are intact: {}", ex.getMessage(), ex);
+        }
     }
 
     private void seedStaff(Clinic clinic) {
@@ -213,7 +221,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     private void seedAppointments(Clinic clinic, List<Doctor> doctors, List<Patient> patients) {
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
-        for (LocalDate date = today.minusDays(45); !date.isAfter(today.plusDays(12)); date = date.plusDays(1)) {
+        for (LocalDate date = today.minusDays(7); !date.isAfter(today.plusDays(5)); date = date.plusDays(1)) {
             if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 continue;
             }
