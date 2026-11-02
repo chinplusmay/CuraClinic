@@ -6,7 +6,7 @@ spring:
     name: clinicflow-api
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:clinicflow}?useSSL=${DB_SSL:false}&allowPublicKeyRetrieval=true&characterEncoding=utf8&connectionTimeZone=LOCAL}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:clinicflow}?createDatabaseIfNotExist=true&useSSL=${DB_SSL:false}&allowPublicKeyRetrieval=true&characterEncoding=utf8&connectionTimeZone=LOCAL}
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:}
     hikari:

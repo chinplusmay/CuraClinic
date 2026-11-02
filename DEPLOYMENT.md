@@ -44,12 +44,19 @@ You can run CuraClinic completely free forever using either of these two recomme
 1. Go to [tidbcloud.com](https://tidbcloud.com) and sign up for a free account.
 2. Click **Create Cluster** -> Select **Serverless** (Free 25 GB).
 3. Under Security Settings, generate a root password and choose your region.
-4. Click **Connect** -> Choose **General / JDBC**. Note your connection details:
+4. **Create the database `clinicflow`**:
+   - Go to the **SQL Editor** tab in TiDB Cloud.
+   - Run:
+     ```sql
+     CREATE DATABASE clinicflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+     ```
+   *(Note: If you do not create `clinicflow`, TiDB Cloud includes a default database named `test` which you can use by setting `DB_NAME=test`).*
+5. Click **Connect** -> Choose **General / JDBC**. Note your connection details:
    - Host (e.g., `gateway01.us-east-1.prod.aws.tidbcloud.com`)
    - Port (typically `4000`)
    - User (e.g., `xxxxxx.root`)
    - Password (your generated password)
-   - Database name: `clinicflow`
+   - Database name: `clinicflow` (or `test`)
 
 ---
 
